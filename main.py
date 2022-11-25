@@ -36,6 +36,6 @@ async def getDocument(query: GetDocumentQuery):
     return response
 
 @app.post("/delete-document")
-async def getDocument(str: GetDocumentQuery):
-    response = service.deleteDocument(id)
+async def deleteDocument(query: GetDocumentQuery):
+    response = service.deleteDocument(query)
     return response

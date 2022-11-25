@@ -29,7 +29,7 @@ class DocumentFileRepository:
 
   def deleteDocument(self,query):
     if self.recordExists(query):
-      fileName = self.getFileName(id)
+      fileName = self.getFileName(query.id)
       os.remove(fileName)
       response = AppResponse()
       return response
@@ -65,6 +65,9 @@ class DocumentFileRepository:
     return response
 
   def recordExists(self,query):
+    if query == None:
+      raise Exception("Query is not defined")
+
     fileName = self.getFileName(query.id)
     file_exists = exists(fileName)
     return file_exists

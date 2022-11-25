@@ -1,5 +1,4 @@
 from appCore.documentServices import AddDocumentCommand
-from appCore.documentServices import AddDocumentCommandSchema
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import GetDocumentQuery
 from appCore.documentServices import GetDocumentsQuery
@@ -21,7 +20,7 @@ async def root():
     return {"message": "Server ok"}
 
 @app.post("/add-document")
-async def addDocument(command):
+async def addDocument(command: AddDocumentCommand):
     service = getService()  
     response = service.addDocument(command)
     return response

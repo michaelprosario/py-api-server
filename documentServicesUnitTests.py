@@ -3,6 +3,7 @@ from appCore.documentServices import AddDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import DocumentRepository
 from appCore.documentServices import GetDocumentsQuery
+import uuid
 
 class DocumentServicesTests(unittest.TestCase):
 

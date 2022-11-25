@@ -10,6 +10,26 @@ class DocumentServicesTests(unittest.TestCase):
 
     def test_DocumentServices__AddDocument__ReturnValidResponseWithGoodInput(self):
         # arrange
+        id = '62ab14c7-9e57-4655-ac4d-777ba710c65f'
+
+        data = {
+            'title': "post title",
+            'content': "content"
+        }
+        createdBy = 'test'
+        command = AddDocumentCommand(data, createdBy, id)  
+
+        repo = DocumentRepository()      
+        service = DocumentServices(repo)
+        
+        # act
+        response = service.addDocument(command)
+
+        # assert
+        self.assertTrue(response.statusCode == 200)
+
+    def test_DocumentServices__AddDocument__FailIdNotValid(self):
+        # arrange
         data = {
             'title': "post title",
             'content': "content"
@@ -24,7 +44,8 @@ class DocumentServicesTests(unittest.TestCase):
         response = service.addDocument(command)
 
         # assert
-        self.assertTrue(response.statusCode == 200)
+        self.assertTrue(response.statusCode == 400)
+
 
     def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
         # arrange

@@ -1,10 +1,12 @@
 import time
 from marshmallow import Schema, fields, validate
+import re
 
 class AppResponse:
   def __init__(self):
     self.message = "ok"
     self.statusCode = 200
+    self.errors = {}
 
 class GetRecordResponse:
   def __init__(self):
@@ -70,7 +72,32 @@ class DocumentServices:
   def __init__(self, documentRepository ):
     self.documentRepository = documentRepository
 
+  def isUUID(self,input):
+    if input == None:
+      return False
+
+    guid_pattern = "^(?:\\{{0,1}(?:[0-9a-fA-F]){8}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){12}\\}{0,1})$"
+    return re.match(guid_pattern, input) != None
+
+  def makeAppResponse(self,message,statusCode):
+      appResponse = AppResponse()
+      appResponse.message = "validation error"
+      appResponse.statusCode = 400
+      return appResponse
+
   def addDocument(self,command):
+    if command == None:
+      return self.makeAppResponse('command is none', 400)
+
+    validationResponse = AddDocumentCommandSchema().validate(command.__dict__)
+    if validationResponse != {}:
+      errorResponse = self.makeAppResponse('validation error', 400)
+      errorResponse.errors = validationResponse
+      return errorResponse
+
+    if not self.isUUID(command.id):
+      return self.makeAppResponse('uuid not valid', 400)
+
     command.data['id'] = command.id
     response = self.documentRepository.addDocument(command)
     return response

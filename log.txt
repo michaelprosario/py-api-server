@@ -1,20 +1,14 @@
 6:45am
 
-class AddDocumentCommand:
-  def __init__(self, data, createdBy,id ):
-    self.createdAt = time.time()
-    self.createdBy = createdBy
-    self.data = data
-    self.id = id
 
 next
 - validate input
 
   def addDocument(self,command):
     - handle null command
-    - pass null data
-    - pass null createdBy
-    - pass id that's not a guid?
+    x- pass null data
+    x- pass null createdBy
+    x- pass id that's not a guid?
 
     
   def deleteDocument(self,id):

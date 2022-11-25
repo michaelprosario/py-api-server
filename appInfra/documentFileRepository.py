@@ -27,11 +27,9 @@ class DocumentFileRepository:
     response = AppResponse()
     return response
 
-  def deleteDocument(self,id):
-    query = GetDocumentQuery("system", id)
-
+  def deleteDocument(self,query):
     if self.recordExists(query):
-      fileName = self.getFileName(id)
+      fileName = self.getFileName(query.id)
       os.remove(fileName)
       response = AppResponse()
       return response
@@ -45,13 +43,13 @@ class DocumentFileRepository:
 
     # iterate over list
     for file in fileList:
-      query = GetDocumentQuery("system", file)
+      query = GetDocumentQuery(userId="system", id=file)
       getResponse = self.getDocument(query)
-      if getResponse.statusCode == 200:
-        records.append(getResponse.data)
+      if getResponse.status == 200:
+        records.append(getResponse.record)
 
-    response = GetRecordsResponse()
-    response.data = records
+    response = GetRecordsResponse(data=records, userId=query.userId)
+    
     return response
 
   def getDocument(self,query):
@@ -60,13 +58,16 @@ class DocumentFileRepository:
     strContent = fileHandle.read()
     dictionary = json.loads(strContent)
 
-    response = GetRecordResponse()
-    response.data = dictionary
+    response = GetRecordResponse(record=dictionary, userId="system")
+    
     fileHandle.close()
 
     return response
 
   def recordExists(self,query):
+    if query == None:
+      raise Exception("Query is not defined")
+
     fileName = self.getFileName(query.id)
     file_exists = exists(fileName)
     return file_exists

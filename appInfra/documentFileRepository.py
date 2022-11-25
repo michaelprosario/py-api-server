@@ -8,7 +8,7 @@ from appCore.documentServices import GetRecordResponse
 from appCore.documentServices import GetDocumentQuery
 from os.path import exists
 
-class DocumentInfraRepository:
+class DocumentFileRepository:
   def __init__(self, dataFolder):
     self.dataFolder = dataFolder
   

@@ -1,5 +1,6 @@
 import unittest
 from appCore.documentServices import AddDocumentCommand
+from appCore.documentServices import AddDocumentCommandSchema
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import DocumentRepository
 from appCore.documentServices import GetDocumentsQuery
@@ -14,7 +15,7 @@ class DocumentServicesTests(unittest.TestCase):
             'content': "content"
         }
         createdBy = 'test'
-        command = AddDocumentCommand(data, createdBy)  
+        command = AddDocumentCommand(data, createdBy, 'id')  
 
         repo = DocumentRepository()      
         service = DocumentServices(repo)
@@ -49,6 +50,45 @@ class DocumentServicesTests(unittest.TestCase):
 
         # assert
         self.assertTrue(response.statusCode == 200)
+
+    def test_AddValidator__ValidateAddDocumentCommand(self):
+        # arrange
+        id = '62ab14c7-9e57-4655-ac4d-777ba710c65f'
+        userId = 'mrosario'
+        data = { 'text': 'foo' }
+        command = AddDocumentCommand(data, 'mrosario', id)
+
+        # act
+        response = AddDocumentCommandSchema().validate(command.__dict__)
+
+        # assert
+        self.assertTrue(response == {})
+
+    def test_AddValidator__ValidateAddDocumentCommand__HandleBadUserId(self):
+        # arrange
+        id = '62ab14c7-9e57-4655-ac4d-777ba710c65f'
+        userId = ''
+        data = { 'text': 'foo' }
+        command = AddDocumentCommand(data, userId, id)
+
+        # act
+        response = AddDocumentCommandSchema().validate(command.__dict__)
+  
+        # assert
+        self.assertTrue(response['createdBy'] != None)
+
+    def test_AddValidator__ValidateAddDocumentCommand__HandleBadId(self):
+        # arrange
+        id = ''
+        userId = 'mrosario'
+        data = { 'text': 'foo' }
+        command = AddDocumentCommand(data, 'mrosario', id)
+
+        # act
+        response = AddDocumentCommandSchema().validate(command.__dict__)
+
+        # assert
+        self.assertTrue(response['id'] != None)
 
 
 if __name__ == '__main__':

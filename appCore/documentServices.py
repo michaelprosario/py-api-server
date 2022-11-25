@@ -1,4 +1,5 @@
 import time
+from marshmallow import Schema, fields, validate
 
 class AppResponse:
   def __init__(self):
@@ -11,12 +12,29 @@ class GetRecordResponse:
     self.statusCode = 200
     self.data = {}
 
+class GetRecordsResponse:
+  def __init__(self):
+    self.message = "ok"
+    self.statusCode = 200
+    self.data = []
+
 class AddDocumentCommand:
   def __init__(self, data, createdBy,id ):
     self.createdAt = time.time()
     self.createdBy = createdBy
     self.data = data
     self.id = id
+
+class AddDocumentCommandSchema(Schema):
+  createdAt = fields.Number(Required=True)
+  createdBy = fields.Str(validate=validate.Length(min=1))
+  id = fields.Str(validate=validate.Length(min=36))
+  data = fields.Dict(Required=True)
+
+class UserSchema(Schema):
+    name = fields.Str()
+    email = fields.Email()
+    created_at = fields.DateTime()
 
 class GetDocumentsQuery:
   def __init__(self, userId):
@@ -38,7 +56,7 @@ class DocumentRepository:
     return response
 
   def getDocuments(self,query):
-    response = AppResponse()
+    response = GetRecordsResponse()
     return response
 
   def getDocument(self,query):
@@ -47,7 +65,6 @@ class DocumentRepository:
 
   def recordExists(self,query):
     return false
-
 
 class DocumentServices:
   def __init__(self, documentRepository ):

@@ -2,13 +2,13 @@ from appCore.documentServices import AddDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import GetDocumentQuery
 from appCore.documentServices import GetDocumentsQuery
-from appInfra.documentInfraRepository import DocumentInfraRepository
+from appInfra.documentFileRepository import DocumentFileRepository
 import unittest
 import uuid
 
 class DocumentServicesTests(unittest.TestCase):
     def getService(self):
-        repo = DocumentInfraRepository("data")      
+        repo = DocumentFileRepository("data")      
         service = DocumentServices(repo)
         return service
 

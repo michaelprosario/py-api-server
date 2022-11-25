@@ -2,10 +2,5 @@
 
 
 next
-x - validate input
-- implement list command  
-  - get list of files in data folder
-  - call get record on each files
-  - add them to a collection
 
-  
+https://realpython.com/fastapi-python-web-apis/

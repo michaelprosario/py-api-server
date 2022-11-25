@@ -69,6 +69,20 @@ class DocumentServicesTests(unittest.TestCase):
         # assert
         self.assertTrue(response)
 
+    def test_DocumentServices__RecordExists__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        id = self.createNewDocument()
+        
+        # act
+        userId = "mrosario"
+        query = GetDocumentQuery(userId, id)
+        service = self.getService() 
+        response = service.deleteDocument(id)
+        recordExists = service.recordExists(query)
+
+        # assert
+        self.assertFalse(recordExists)
+
     # def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
     #     # arrange
     #     id = "recordId"

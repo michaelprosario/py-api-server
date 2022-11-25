@@ -27,9 +27,7 @@ class DocumentFileRepository:
     response = AppResponse()
     return response
 
-  def deleteDocument(self,id):
-    query = GetDocumentQuery(userId="system", id=id)
-
+  def deleteDocument(self,query):
     if self.recordExists(query):
       fileName = self.getFileName(id)
       os.remove(fileName)

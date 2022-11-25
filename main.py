@@ -12,6 +12,7 @@ def getService():
     service = DocumentServices(repo)
     return service
 
+service = getService()
 
 app = FastAPI()
 
@@ -20,7 +21,21 @@ async def root():
     return {"message": "Server ok"}
 
 @app.post("/add-document")
-async def addDocument(command: AddDocumentCommand):
-    service = getService()  
+async def addDocument(command: AddDocumentCommand):      
     response = service.addDocument(command)
+    return response
+
+@app.post("/get-documents")
+async def getDocuments(query: GetDocumentsQuery):
+    response = service.getDocuments(query)
+    return response
+
+@app.post("/get-document")
+async def getDocument(query: GetDocumentQuery):
+    response = service.getDocument(query)
+    return response
+
+@app.post("/delete-document")
+async def getDocument(str: GetDocumentQuery):
+    response = service.deleteDocument(id)
     return response

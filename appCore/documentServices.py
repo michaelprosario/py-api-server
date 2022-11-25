@@ -38,7 +38,7 @@ class DocumentRepository:
     response = AppResponse()
     return response
 
-  def deleteDocument(self,id):
+  def deleteDocument(self,command):
     response = AppResponse()
     return response
 
@@ -85,15 +85,16 @@ class DocumentServices:
       errorResponse = self.makeAppResponse('validation error', 400, e)
       return errorResponse
 
-  def deleteDocument(self,id):
-    if id == None:
-      return self.makeAppResponse('id is none', 400, None)
+  def deleteDocument(self,query):
+    if query == None:
+      return self.makeAppResponse('query is none', 400, None)
 
-    if not self.isUUID(id):
-      return self.makeAppResponse('id is bad', 400, None)
-
-    response = self.documentRepository.deleteDocument(id)
-    return response
+    try:
+      response = self.documentRepository.deleteDocument(query)
+      return response
+    except ValidationError as e:
+      errorResponse = self.makeAppResponse('validation error', 400, e)
+      return errorResponse
 
   def getDocuments(self,query):
     if query == None:

@@ -33,20 +33,19 @@ class AddDocumentCommandSchema(Schema):
   id = fields.Str(validate=validate.Length(min=36))
   data = fields.Dict(Required=True)
 
-class UserSchema(Schema):
-    name = fields.Str()
-    email = fields.Email()
-    created_at = fields.DateTime()
-
 class GetDocumentsQuery:
   def __init__(self, userId):
     self.keyword = ""
-    self.createdBy = userId
+    self.userId = userId
 
 class GetDocumentQuery:
   def __init__(self, userId, id):
     self.id = id
-    self.createdBy = userId
+    self.userId = userId
+
+class GetDocumentQuerySchema(Schema):
+  userId = fields.Str(validate=validate.Length(min=1))
+  id = fields.Str(validate=validate.Length(min=36))
 
 class DocumentRepository:
   def addDocument(self,command):
@@ -103,16 +102,43 @@ class DocumentServices:
     return response
 
   def deleteDocument(self,id):
+    if id == None:
+      return self.makeAppResponse('id is none', 400)
+
     response = self.documentRepository.deleteDocument(id)
     return response
 
   def getDocuments(self,query):
+    if query == None:
+      return self.makeAppResponse('query is none', 400)
+
+    if query.userId == None:
+      return self.makeAppResponse('query.userId should be defined', 400)
+
     response = self.documentRepository.getDocuments(query)
     return response
 
   def getDocument(self,query):
+    if query == None:
+      return self.makeAppResponse('query is none', 400)
+
+    validationResponse = GetDocumentQuerySchema().validate(command.__dict__)
+    if validationResponse != {}:
+      errorResponse = self.makeAppResponse('validation error', 400)
+      errorResponse.errors = validationResponse
+      return errorResponse
+
     response = self.documentRepository.getDocument(query)
     return response
 
   def recordExists(self,query):
+    if query == None:
+      return self.makeAppResponse('query is none', 400)
+
+    validationResponse = GetDocumentQuerySchema().validate(command.__dict__)
+    if validationResponse != {}:
+      errorResponse = self.makeAppResponse('validation error', 400)
+      errorResponse.errors = validationResponse
+      return errorResponse
+
     return self.documentRepository.recordExists(query)

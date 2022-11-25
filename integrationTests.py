@@ -56,6 +56,20 @@ class DocumentServicesTests(unittest.TestCase):
         # assert
         self.assertTrue(response.statusCode == 200)
 
+    def test_DocumentServices__GetDocuments__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        id = self.createNewDocument()
+        
+        # act
+        userId = "mrosario"
+        query = GetDocumentsQuery(userId)
+        service = self.getService() 
+        response = service.getDocuments(query)
+        print(response.data)
+
+        # assert
+        self.assertTrue(response.statusCode == 200)
+
     def test_DocumentServices__RecordExists__ReturnValidResponseWithGoodInput(self):
         # arrange
         id = self.createNewDocument()
@@ -82,31 +96,6 @@ class DocumentServicesTests(unittest.TestCase):
 
         # assert
         self.assertFalse(recordExists)
-
-    # def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
-    #     # arrange
-    #     id = "recordId"
-    #     repo = DocumentRepository()      
-    #     service = DocumentServices(repo)
-        
-    #     # act
-    #     response = service.deleteDocument(id)
-
-    #     # assert
-    #     self.assertTrue(response.statusCode == 200)
-
-    # def test_DocumentServices__GetDocuments__ReturnValidResponseWithGoodInput(self):
-    #     # arrange
-    #     query = GetDocumentsQuery('system')
-
-    #     repo = DocumentRepository()      
-    #     service = DocumentServices(repo)
-        
-    #     # act
-    #     response = service.getDocuments(query)
-
-    #     # assert
-    #     self.assertTrue(response.statusCode == 200)
 
 
 if __name__ == '__main__':

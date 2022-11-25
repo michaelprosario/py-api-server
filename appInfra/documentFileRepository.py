@@ -5,6 +5,7 @@ sys.path.append('../appCore')
 import json
 from appCore.documentServices import AppResponse
 from appCore.documentServices import GetRecordResponse
+from appCore.documentServices import GetRecordsResponse
 from appCore.documentServices import GetDocumentQuery
 from os.path import exists
 
@@ -13,7 +14,7 @@ class DocumentFileRepository:
     self.dataFolder = dataFolder
   
   def getFileName(self, id):
-    fileName = self.dataFolder + "/" + id + ".json"
+    fileName = self.dataFolder + "/" + id
     return fileName
 
   def addDocument(self,command):
@@ -36,7 +37,21 @@ class DocumentFileRepository:
       return response
 
   def getDocuments(self,query):
-    response = AppResponse()
+    # make response object
+    records = []
+
+    # get list of files
+    fileList = os.listdir(self.dataFolder)
+
+    # iterate over list
+    for file in fileList:
+      query = GetDocumentQuery("system", file)
+      getResponse = self.getDocument(query)
+      if getResponse.statusCode == 200:
+        records.append(getResponse.data)
+
+    response = GetRecordsResponse()
+    response.data = records
     return response
 
   def getDocument(self,query):

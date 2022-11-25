@@ -2,16 +2,10 @@
 
 
 next
-- validate input
+x - validate input
+- implement list command  
+  - get list of files in data folder
+  - call get record on each files
+  - add them to a collection
 
-  def addDocument(self,command):
-    - handle null command
-    x- pass null data
-    x- pass null createdBy
-    x- pass id that's not a guid?
-
-    
-  def deleteDocument(self,id):
-  def getDocuments(self,query):
-  def getDocument(self,query):
-  def recordExists(self,query):
+  

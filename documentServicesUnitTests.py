@@ -24,19 +24,14 @@ class DocumentServicesTests(unittest.TestCase):
         # assert
         self.assertTrue(response.statusCode == 200)
 
-    def test_DocumentServices__AddDocument__ExecuteAddOnRepository(self):
+    def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
         # arrange
-        data = {
-            'title': "post title",
-            'content': "content"
-        }
-        createdBy = 'test'
-        command = AddDocumentCommand(data, createdBy)        
+        id = "recordId"
         repo = DocumentRepository()      
         service = DocumentServices(repo)
         
         # act
-        response = service.addDocument(command)
+        response = service.deleteDocument(id)
 
         # assert
         self.assertTrue(response.statusCode == 200)

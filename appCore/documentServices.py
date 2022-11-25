@@ -105,6 +105,9 @@ class DocumentServices:
     if id == None:
       return self.makeAppResponse('id is none', 400)
 
+    if not self.isUUID(id):
+      return self.makeAppResponse('id is bad', 400)
+
     response = self.documentRepository.deleteDocument(id)
     return response
 
@@ -122,7 +125,7 @@ class DocumentServices:
     if query == None:
       return self.makeAppResponse('query is none', 400)
 
-    validationResponse = GetDocumentQuerySchema().validate(command.__dict__)
+    validationResponse = GetDocumentQuerySchema().validate(query.__dict__)
     if validationResponse != {}:
       errorResponse = self.makeAppResponse('validation error', 400)
       errorResponse.errors = validationResponse
@@ -135,7 +138,7 @@ class DocumentServices:
     if query == None:
       return self.makeAppResponse('query is none', 400)
 
-    validationResponse = GetDocumentQuerySchema().validate(command.__dict__)
+    validationResponse = GetDocumentQuerySchema().validate(query.__dict__)
     if validationResponse != {}:
       errorResponse = self.makeAppResponse('validation error', 400)
       errorResponse.errors = validationResponse

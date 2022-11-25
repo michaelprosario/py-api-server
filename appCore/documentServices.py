@@ -26,7 +26,7 @@ class DocumentRepository:
     return response
 
   def getDocuments(self,query):
-    response = self.documentRepository.getDocuments(query)
+    response = AppResponse()
     return response
     
 class DocumentServices:

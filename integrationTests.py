@@ -20,7 +20,7 @@ class DocumentServicesTests(unittest.TestCase):
         }
         createdBy = 'test'
         id = str(uuid.uuid4())
-        command = AddDocumentCommand(data, createdBy, id)
+        command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)
         service = self.getService()  
         response = service.addDocument(command)
         return id
@@ -33,7 +33,7 @@ class DocumentServicesTests(unittest.TestCase):
         }
         createdBy = 'test'
         id = str(uuid.uuid4())
-        command = AddDocumentCommand(data, createdBy, id)  
+        command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)  
 
         service = self.getService() 
 
@@ -41,7 +41,7 @@ class DocumentServicesTests(unittest.TestCase):
         response = service.addDocument(command)
 
         # assert
-        self.assertTrue(response.statusCode == 200)
+        self.assertTrue(response.status == 200)
 
     def test_DocumentServices__GetDocument__ReturnValidResponseWithGoodInput(self):
         # arrange
@@ -49,12 +49,12 @@ class DocumentServicesTests(unittest.TestCase):
         
         # act
         userId = "mrosario"
-        query = GetDocumentQuery(userId, id)
+        query = GetDocumentQuery(userId=userId, id=id)
         service = self.getService() 
         response = service.getDocument(query)
 
         # assert
-        self.assertTrue(response.statusCode == 200)
+        self.assertTrue(response.status == 200)
 
     def test_DocumentServices__GetDocuments__ReturnValidResponseWithGoodInput(self):
         # arrange
@@ -62,13 +62,12 @@ class DocumentServicesTests(unittest.TestCase):
         
         # act
         userId = "mrosario"
-        query = GetDocumentsQuery(userId)
+        query = GetDocumentsQuery(userId=userId)
         service = self.getService() 
         response = service.getDocuments(query)
-        print(response.data)
 
         # assert
-        self.assertTrue(response.statusCode == 200)
+        self.assertTrue(response.status == 200)
 
     def test_DocumentServices__RecordExists__ReturnValidResponseWithGoodInput(self):
         # arrange
@@ -76,7 +75,7 @@ class DocumentServicesTests(unittest.TestCase):
         
         # act
         userId = "mrosario"
-        query = GetDocumentQuery(userId, id)
+        query = GetDocumentQuery(userId=userId, id=id)
         service = self.getService() 
         response = service.recordExists(query)
 
@@ -89,7 +88,7 @@ class DocumentServicesTests(unittest.TestCase):
         
         # act
         userId = "mrosario"
-        query = GetDocumentQuery(userId, id)
+        query = GetDocumentQuery(userId=userId, id=id)
         service = self.getService() 
         response = service.deleteDocument(id)
         recordExists = service.recordExists(query)

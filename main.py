@@ -3,12 +3,14 @@ from appCore.documentServices import DocumentServices
 from appCore.documentServices import GetDocumentQuery
 from appCore.documentServices import GetDocumentsQuery
 from appInfra.documentFileRepository import DocumentFileRepository
+from appInfra.documentSqlLiteRepository import DocSqlLiteRepository
 import uuid
 
 from fastapi import FastAPI
 
 def getService():
-    repo = DocumentFileRepository("data")      
+    repo = DocSqlLiteRepository()
+    repo.setupAppDatabase()
     service = DocumentServices(repo)
     return service
 

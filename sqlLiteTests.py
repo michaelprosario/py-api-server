@@ -3,30 +3,18 @@ from appCore.documentServices import DocumentServices
 from appCore.documentServices import GetDocumentQuery
 from appCore.documentServices import GetDocumentsQuery
 from appInfra.documentFileRepository import DocumentFileRepository
+from appInfra.documentSqlLiteRepository import DocSqlLiteRepository
 import unittest
 import uuid
 
 class DocumentServicesTests(unittest.TestCase):
     def getService(self):
-        repo = DocumentFileRepository("data")      
+        repo = DocSqlLiteRepository()
+        repo.setupMemoryDatabase()
         service = DocumentServices(repo)
         return service
 
-
-    def createNewDocument(self):
-        data = {
-            'title': "post title",
-            'content': "content"
-        }
-        createdBy = 'test'
-        id = str(uuid.uuid4())
-        command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)
-        service = self.getService()  
-        response = service.addDocument(command)
-        return id
-
-    def test_DocumentServices__AddDocument__ReturnValidResponseWithGoodInput(self):
-        # arrange
+    def makeAddCommand(self):
         data = {
             'title': "post title",
             'content': "content"
@@ -34,7 +22,13 @@ class DocumentServicesTests(unittest.TestCase):
         createdBy = 'test'
         id = str(uuid.uuid4())
         command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)  
+        command.collection = 'test'
+        command.id = id
+        return command
 
+    def test_DocumentServices__AddDocument__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        command = self.makeAddCommand()
         service = self.getService() 
 
         # act
@@ -45,56 +39,67 @@ class DocumentServicesTests(unittest.TestCase):
 
     def test_DocumentServices__GetDocument__ReturnValidResponseWithGoodInput(self):
         # arrange
-        id = self.createNewDocument()
-        
-        # act
-        userId = "mrosario"
-        query = GetDocumentQuery(userId=userId, id=id)
+        command = self.makeAddCommand()
         service = self.getService() 
+        response = service.addDocument(command)
+
+        # act
+        query = GetDocumentQuery(
+            id=command.id,
+            userId = "system"
+            )
         response = service.getDocument(query)
 
         # assert
-        self.assertTrue(response.status == 200)
-
-    def test_DocumentServices__GetDocuments__ReturnValidResponseWithGoodInput(self):
-        # arrange
-        id = self.createNewDocument()
-        
-        # act
-        userId = "mrosario"
-        query = GetDocumentsQuery(userId=userId)
-        service = self.getService() 
-        response = service.getDocuments(query)
-
-        # assert
+        print(response)
         self.assertTrue(response.status == 200)
 
     def test_DocumentServices__RecordExists__ReturnValidResponseWithGoodInput(self):
         # arrange
-        id = self.createNewDocument()
-        
-        # act
-        userId = "mrosario"
-        query = GetDocumentQuery(userId=userId, id=id)
+        command = self.makeAddCommand()
         service = self.getService() 
+        response = service.addDocument(command)
+
+        # act
+        query = GetDocumentQuery(
+            id=command.id,
+            userId = "system"
+            )
         response = service.recordExists(query)
 
         # assert
         self.assertTrue(response)
 
-    def test_DocumentServices__RecordExists__ReturnValidResponseWithGoodInput(self):
+    def test_DocumentServices__GetAll__ReturnValidResponseWithGoodInput(self):
         # arrange
-        id = self.createNewDocument()
-        
-        # act
-        userId = "mrosario"
-        query = GetDocumentQuery(userId=userId, id=id)
+        command = self.makeAddCommand()
         service = self.getService() 
+        response = service.addDocument(command)
+
+        query = GetDocumentsQuery(userId="system")
+
+        # act
+        response = service.getDocuments(query)
+
+        # assert
+        self.assertTrue(response)        
+
+    def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        command = self.makeAddCommand()
+        service = self.getService() 
+        response = service.addDocument(command)
+
+        # act
+        query = GetDocumentQuery(
+            id=command.id,
+            userId = "system"
+            )
         response = service.deleteDocument(query)
         recordExists = service.recordExists(query)
 
         # assert
-        self.assertFalse(recordExists)
+        self.assertFalse( recordExists )
 
 
 if __name__ == '__main__':

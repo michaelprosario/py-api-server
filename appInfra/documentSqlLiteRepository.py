@@ -37,8 +37,12 @@ class Doc(Base):
 
 class DocSqlLiteRepository():
     def setupMemoryDatabase(self):
-        self.engine = create_engine("sqlite:///docs.db", echo=True)
+        self.engine = create_engine("sqlite://", echo=True)
         Base.metadata.create_all(self.engine)
+
+    def setupAppDatabase(self):
+        self.engine = create_engine("sqlite:///app.db", echo=True)
+        Base.metadata.create_all(self.engine)        
     
     def addDocument(self,command):
         strData = json.dumps(command.data)
@@ -61,23 +65,20 @@ class DocSqlLiteRepository():
         response = AppResponse()
         return response
 
-    # def getDocuments(self,query):
-    # # make response object
-    # records = []
+    def getDocuments(self,query):
+        records = []
 
-    # # get list of files
-    # fileList = os.listdir(self.dataFolder)
+        with Session(self.engine) as session:
+            recordSet = session.query(Doc).all()
 
-    # # iterate over list
-    # for file in fileList:
-    # query = GetDocumentQuery(userId="system", id=file)
-    # getResponse = self.getDocument(query)
-    # if getResponse.status == 200:
-    # records.append(getResponse.record)
+            for record in recordSet:
+                query = GetDocumentQuery(userId="system", id=record.id)
+                getResponse = self.getDocument(query)
+                if getResponse.status == 200:
+                    records.append(getResponse.record)
 
-    # response = GetRecordsResponse(data=records, userId=query.userId)
-
-    # return response
+        response = GetRecordsResponse(data=records, userId=query.userId)
+        return response
 
     def getDocument(self,query):
         with Session(self.engine) as session:

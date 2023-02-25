@@ -71,6 +71,20 @@ class DocumentServicesTests(unittest.TestCase):
         # assert
         self.assertTrue(response)
 
+    def test_DocumentServices__GetAll__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        command = self.makeAddCommand()
+        service = self.getService() 
+        response = service.addDocument(command)
+
+        query = GetDocumentsQuery(userId="system")
+
+        # act
+        response = service.getDocuments(query)
+
+        # assert
+        self.assertTrue(response)        
+
     def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
         # arrange
         command = self.makeAddCommand()

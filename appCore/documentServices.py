@@ -20,10 +20,12 @@ class GetRecordsResponse(BaseModel):
   data: List[dict]
 
 class AddDocumentCommand(BaseModel):
+  collection: str = ''
   createdAt: float = 0
   createdBy: str 
   data: dict
   id:str
+  name: str = ''
 
 class GetDocumentsQuery(BaseModel):
   keyword:str = ''

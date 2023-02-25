@@ -28,7 +28,6 @@ class Doc(Base):
     id: Mapped[str] = mapped_column(primary_key=True)
     collection: Mapped[str] = mapped_column(String(1024))
     content: Mapped[str] = mapped_column(String(1024))
-    name: Mapped[str] = mapped_column(String(1024))
     tags: Mapped[str] = mapped_column(String(1024))
     created_by: Mapped[str] = mapped_column(String(1024))
     updated_by: Mapped[str] = mapped_column(String(1024))
@@ -48,7 +47,7 @@ class DocSqlLiteRepository():
         strData = json.dumps(command.data)
 
         with Session(self.engine) as session:
-            record = Doc(id=command.id,collection=command.collection,content=strData,name=command.name,tags = '',created_by='system',updated_by='system', created_at=0, updated_at=0)
+            record = Doc(id=command.id,collection=command.collection,content=strData,tags = '',created_by='system',updated_by='system', created_at=0, updated_at=0)
             session.add_all([record])
             session.commit()
 
@@ -67,9 +66,16 @@ class DocSqlLiteRepository():
 
     def getDocuments(self,query):
         records = []
+        print(query)
 
         with Session(self.engine) as session:
-            recordSet = session.query(Doc).all()
+            if len(query.keyword) > 0:
+                search = "%{}%".format(query.keyword)
+                recordSet = session.query(Doc).filter(Doc.content.like(search))            
+            elif len(query.collection) > 0:
+                recordSet = session.query(Doc).filter(Doc.collection == query.collection)            
+            else:
+                recordSet = session.query(Doc).all()
 
             for record in recordSet:
                 query = GetDocumentQuery(userId="system", id=record.id)
@@ -83,6 +89,9 @@ class DocSqlLiteRepository():
     def getDocument(self,query):
         with Session(self.engine) as session:
             record = session.get(Doc, query.id)
+            if( record == None):
+                return AppResponse(status=404, message="Record not found")
+            
             dictionary = json.loads(record.content)
             response = GetRecordResponse(record=dictionary, userId="system")
         return response

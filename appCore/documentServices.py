@@ -25,10 +25,10 @@ class AddDocumentCommand(BaseModel):
   createdBy: str 
   data: dict
   id:str
-  name: str = ''
 
 class GetDocumentsQuery(BaseModel):
   keyword:str = ''
+  collection:str = ''
   userId:str 
 
 class GetDocumentQuery(BaseModel):

@@ -24,7 +24,6 @@ class DocumentServicesTests(unittest.TestCase):
         command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)  
         command.collection = 'test'
         command.id = id
-        command.name = 'doc1'
         return command
 
     def test_DocumentServices__AddDocument__ReturnValidResponseWithGoodInput(self):

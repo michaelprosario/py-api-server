@@ -71,5 +71,23 @@ class DocumentServicesTests(unittest.TestCase):
         # assert
         self.assertTrue(response)
 
+    def test_DocumentServices__DeleteDocument__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        command = self.makeAddCommand()
+        service = self.getService() 
+        response = service.addDocument(command)
+
+        # act
+        query = GetDocumentQuery(
+            id=command.id,
+            userId = "system"
+            )
+        response = service.deleteDocument(query)
+        recordExists = service.recordExists(query)
+
+        # assert
+        self.assertFalse( recordExists )
+
+
 if __name__ == '__main__':
     unittest.main()

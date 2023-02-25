@@ -37,7 +37,7 @@ class Doc(Base):
 
 class DocSqlLiteRepository():
     def setupMemoryDatabase(self):
-        self.engine = create_engine("sqlite://", echo=True)
+        self.engine = create_engine("sqlite:///docs.db", echo=True)
         Base.metadata.create_all(self.engine)
     
     def addDocument(self,command):
@@ -53,8 +53,10 @@ class DocSqlLiteRepository():
 
     def deleteDocument(self,query):
         if self.recordExists(query):
-            with Session(engine) as session:
-                stmt = select(Doc).where(Doc.id == query.id)
+            with Session(self.engine) as session:
+                record = session.get(Doc, query.id)
+                session.delete(record)
+                session.commit()
         
         response = AppResponse()
         return response
@@ -89,7 +91,7 @@ class DocSqlLiteRepository():
             raise Exception("Query is not defined")
 
         with Session(self.engine) as session:
-            record = select(Doc).where(Doc.id == query.id)
+            record = session.get(Doc, query.id)
 
         return record != None
 

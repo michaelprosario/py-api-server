@@ -88,9 +88,8 @@ class DocSqlLiteRepository():
         if query == None:
             raise Exception("Query is not defined")
 
-        with Session(engine) as session:
-            record = select(Doc).where(Doc.c.id == query.id)
-            dictionary = json.loads(record.content)
+        with Session(self.engine) as session:
+            record = select(Doc).where(Doc.id == query.id)
 
         return record != None
 

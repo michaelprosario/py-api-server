@@ -55,5 +55,21 @@ class DocumentServicesTests(unittest.TestCase):
         print(response)
         self.assertTrue(response.status == 200)
 
+    def test_DocumentServices__RecordExists__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        command = self.makeAddCommand()
+        service = self.getService() 
+        response = service.addDocument(command)
+
+        # act
+        query = GetDocumentQuery(
+            id=command.id,
+            userId = "system"
+            )
+        response = service.recordExists(query)
+
+        # assert
+        self.assertTrue(response)
+
 if __name__ == '__main__':
     unittest.main()

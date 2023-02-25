@@ -90,7 +90,7 @@ class DocumentServicesTests(unittest.TestCase):
         userId = "mrosario"
         query = GetDocumentQuery(userId=userId, id=id)
         service = self.getService() 
-        response = service.deleteDocument(id)
+        response = service.deleteDocument(query)
         recordExists = service.recordExists(query)
 
         # assert

@@ -26,6 +26,7 @@ class Doc(Base):
     __tablename__ = "doc"
 
     id: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(1024))
     collection: Mapped[str] = mapped_column(String(1024))
     content: Mapped[str] = mapped_column(String(1024))
     tags: Mapped[str] = mapped_column(String(1024))
@@ -47,7 +48,17 @@ class DocSqlLiteRepository():
         strData = json.dumps(command.data)
 
         with Session(self.engine) as session:
-            record = Doc(id=command.id,collection=command.collection,content=strData,tags = '',created_by='system',updated_by='system', created_at=0, updated_at=0)
+            record = Doc(
+                id=command.id, 
+                name=command.name, 
+                collection=command.collection,
+                content=strData,
+                tags = command.tags,
+                created_by='system',
+                updated_by='system', 
+                created_at=0, 
+                updated_at=0
+                )
             session.add_all([record])
             session.commit()
 
@@ -60,6 +71,8 @@ class DocSqlLiteRepository():
         with Session(self.engine) as session:
             record = session.get(Doc, command.id)
             record.content = strData
+            record.name = command.name
+            record.tags = command.tags
             session.commit()
 
         response = AppResponse()

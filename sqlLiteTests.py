@@ -22,7 +22,7 @@ class DocumentServicesTests(unittest.TestCase):
         }
         createdBy = 'test'
         id = str(uuid.uuid4())
-        command = AddDocumentCommand(data=data, userId=createdBy, id=id)  
+        command = AddDocumentCommand(data=data, userId=createdBy, id=id, name='testDoc')  
         command.collection = 'test'
         command.id = id
         return command
@@ -110,7 +110,7 @@ class DocumentServicesTests(unittest.TestCase):
         }
         createdBy = 'test'
         id = str(uuid.uuid4())
-        command = StoreDocumentCommand(data=data, userId=createdBy, id=id)  
+        command = StoreDocumentCommand(data=data, userId=createdBy, id =id,name='testDoc')  
 
         service = self.getService() 
 
@@ -128,7 +128,7 @@ class DocumentServicesTests(unittest.TestCase):
         }
         createdBy = 'test'
         id = str(uuid.uuid4())
-        command = StoreDocumentCommand(data=data, userId=createdBy, id=id)  
+        command = StoreDocumentCommand(data=data, userId=createdBy, id=id, name='testDoc')  
 
         service = self.getService() 
 
@@ -149,7 +149,7 @@ class DocumentServicesTests(unittest.TestCase):
         data2['content'] = newValue
 
         # store it again
-        command2 = StoreDocumentCommand(data=data2, userId=createdBy, id=id)
+        command2 = StoreDocumentCommand(data=data2, userId=createdBy, id=id, name='testDoc')
         storeResponse2 = service.storeDocument(command2)
 
         # get the record again

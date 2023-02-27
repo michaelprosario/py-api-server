@@ -8,15 +8,8 @@ sh start.sh
 - pip install SQLAlchemy
 
 ## Todo
-x- Implement Sql Lit repo
-x- Setup db table
-x- Execute add
-- Execute update
-x- Execute delete
-- Get all
-- add filter by collection
-- query operation should do a keyword search on content
-x- remove name object on add command
+- add name field
+- add tags field
 - on add - set time stamp
 - on update - set time stamp
 - on add - set createBy
@@ -25,11 +18,7 @@ x- remove name object on add command
 
 
 Ideal fields
-- id: str = ''
-- collection: str = ''
-- json_data: str = ''
 - name: str = ''
-
 - tags: str = ''
 - created_by: str = ''
 - updated_by: str = ''
@@ -39,5 +28,3 @@ Ideal fields
 
 
 
-- id: str = ''
-- collection: str = ''

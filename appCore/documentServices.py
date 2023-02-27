@@ -21,14 +21,13 @@ class GetRecordsResponse(BaseModel):
 
 class AddDocumentCommand(BaseModel):
   collection: str = ''
-  userId: str 
+  userId: str = ''
+  name: str = ''
+  tags: str = ''
   data: dict
-  id:str
+  id:str = ''
 
 class StoreDocumentCommand(AddDocumentCommand):
-  collection: str = ''
-  userId: str 
-  data: dict
   id:str
 
 class GetDocumentsQuery(BaseModel):
@@ -90,6 +89,8 @@ class DocumentServices:
         return self.makeAppResponse('uuid not valid', 400, None)
 
       command.data['id'] = command.id
+      command.data['name'] = command.name
+      command.data['tags'] = command.tags
       response = self.documentRepository.addDocument(command)
       return response
     except ValidationError as e:
@@ -105,6 +106,8 @@ class DocumentServices:
         return self.makeAppResponse('uuid not valid', 400, None)
 
       command.data['id'] = command.id
+      command.data['name'] = command.name
+      command.data['tags'] = command.tags
 
       # check if record exists
       recordExistsQuery = GetDocumentQuery(userId = command.userId, id=command.id)

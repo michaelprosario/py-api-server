@@ -54,6 +54,17 @@ class DocSqlLiteRepository():
         response = AppResponse()
         return response
 
+    def updateDocument(self,command):
+        strData = json.dumps(command.data)
+
+        with Session(self.engine) as session:
+            record = session.get(Doc, command.id)
+            record.content = strData
+            session.commit()
+
+        response = AppResponse()
+        return response
+
     def deleteDocument(self,query):
         if self.recordExists(query):
             with Session(self.engine) as session:

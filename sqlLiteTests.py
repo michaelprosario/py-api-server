@@ -1,4 +1,5 @@
 from appCore.documentServices import AddDocumentCommand
+from appCore.documentServices import StoreDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import GetDocumentQuery
 from appCore.documentServices import GetDocumentsQuery
@@ -100,6 +101,65 @@ class DocumentServicesTests(unittest.TestCase):
 
         # assert
         self.assertFalse( recordExists )
+
+    def test_DocumentServices__StoreDocument__ReturnValidResponseWithGoodInput(self):
+        # arrange
+        data = {
+            'title': "post from store",
+            'content': "content from store"
+        }
+        createdBy = 'test'
+        id = str(uuid.uuid4())
+        command = StoreDocumentCommand(data=data, userId=createdBy, id=id)  
+
+        service = self.getService() 
+
+        # act
+        response = service.storeDocument(command)
+
+        # assert
+        self.assertTrue(response.status == 200)
+
+    def test_DocumentServices__StoreDocument__TestUpdateFlow(self):
+        # arrange
+        data = {
+            'title': "post from store",
+            'content': "content from store"
+        }
+        createdBy = 'test'
+        id = str(uuid.uuid4())
+        command = StoreDocumentCommand(data=data, userId=createdBy, id=id)  
+
+        service = self.getService() 
+
+        # act
+        response = service.storeDocument(command)
+
+        # make record record exists
+        getRecordQuery = GetDocumentQuery(userId="test", id=id)
+
+        # get the record back from the db
+        recordDoesExist = service.recordExists(getRecordQuery)
+        self.assertTrue(recordDoesExist)
+
+        # change it a bit
+        record2 = service.getDocument(getRecordQuery)
+        data2 = record2.record
+        newValue="newValue"
+        data2['content'] = newValue
+
+        # store it again
+        command2 = StoreDocumentCommand(data=data2, userId=createdBy, id=id)
+        storeResponse2 = service.storeDocument(command2)
+
+        # get the record again
+        getDocumentResponse3 = service.getDocument(getRecordQuery)
+
+        # see if the change worked
+        self.assertTrue(getDocumentResponse3.record['content']==newValue)
+
+        # assert
+        self.assertTrue(response.status == 200)
 
 
 if __name__ == '__main__':

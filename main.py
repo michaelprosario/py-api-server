@@ -1,4 +1,5 @@
 from appCore.documentServices import AddDocumentCommand
+from appCore.documentServices import StoreDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import GetDocumentQuery
 from appCore.documentServices import GetDocumentsQuery
@@ -24,20 +25,20 @@ async def root():
 
 @app.post("/add-document")
 async def addDocument(command: AddDocumentCommand):      
-    response = service.addDocument(command)
-    return response
+    return service.addDocument(command)
+
+@app.post("/store-document")
+async def storeDocument(command: StoreDocumentCommand):      
+    return service.storeDocument(command)
 
 @app.post("/get-documents")
 async def getDocuments(query: GetDocumentsQuery):
-    response = service.getDocuments(query)
-    return response
+    return service.getDocuments(query)
 
 @app.post("/get-document")
 async def getDocument(query: GetDocumentQuery):
-    response = service.getDocument(query)
-    return response
+    return service.getDocument(query)
 
 @app.post("/delete-document")
 async def deleteDocument(query: GetDocumentQuery):
-    response = service.deleteDocument(query)
-    return response
+    return service.deleteDocument(query)

@@ -21,9 +21,13 @@ class GetRecordsResponse(BaseModel):
 
 class AddDocumentCommand(BaseModel):
   collection: str = ''
-  createdAt: float = 0
-  createdBy: str 
+  userId: str = ''
+  name: str = ''
+  tags: str = ''
   data: dict
+  id:str = ''
+
+class StoreDocumentCommand(AddDocumentCommand):
   id:str
 
 class GetDocumentsQuery(BaseModel):
@@ -37,6 +41,10 @@ class GetDocumentQuery(BaseModel):
 
 class DocumentRepository:
   def addDocument(self,command):
+    response = AppResponse()
+    return response
+
+  def updateDocument(self,command):
     response = AppResponse()
     return response
 
@@ -81,7 +89,37 @@ class DocumentServices:
         return self.makeAppResponse('uuid not valid', 400, None)
 
       command.data['id'] = command.id
+      command.data['name'] = command.name
+      command.data['tags'] = command.tags
       response = self.documentRepository.addDocument(command)
+      return response
+    except ValidationError as e:
+      errorResponse = self.makeAppResponse('validation error', 400, e)
+      return errorResponse
+
+  def storeDocument(self,command):
+    if command == None:
+      return self.makeAppResponse('command is none', 400, None)
+
+    try:
+      if not self.isUUID(command.id):
+        return self.makeAppResponse('uuid not valid', 400, None)
+
+      command.data['id'] = command.id
+      command.data['name'] = command.name
+      command.data['tags'] = command.tags
+
+      # check if record exists
+      recordExistsQuery = GetDocumentQuery(userId = command.userId, id=command.id)
+      recordExists = self.documentRepository.recordExists(recordExistsQuery)
+
+      if recordExists:
+        # update doc as needed
+        response = self.documentRepository.updateDocument(command)
+      else:
+        # change doc as needed
+        response = self.documentRepository.addDocument(command)
+
       return response
     except ValidationError as e:
       errorResponse = self.makeAppResponse('validation error', 400, e)

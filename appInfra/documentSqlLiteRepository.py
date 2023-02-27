@@ -10,6 +10,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
 from typing import List
 from typing import Optional
+import time
 import json
 import sys
 import os
@@ -26,6 +27,7 @@ class Doc(Base):
     __tablename__ = "doc"
 
     id: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(1024))
     collection: Mapped[str] = mapped_column(String(1024))
     content: Mapped[str] = mapped_column(String(1024))
     tags: Mapped[str] = mapped_column(String(1024))
@@ -44,11 +46,42 @@ class DocSqlLiteRepository():
         Base.metadata.create_all(self.engine)        
     
     def addDocument(self,command):
+
+        timeStamp = int(time.time()) 
+        command.data['createdAt'] = timeStamp
+
         strData = json.dumps(command.data)
 
         with Session(self.engine) as session:
-            record = Doc(id=command.id,collection=command.collection,content=strData,tags = '',created_by='system',updated_by='system', created_at=0, updated_at=0)
+            record = Doc(
+                id=command.id, 
+                name=command.name, 
+                collection=command.collection,
+                content=strData,
+                tags = command.tags,
+                created_by='system',
+                updated_by='system', 
+                created_at=timeStamp, 
+                updated_at=0
+                )
             session.add_all([record])
+            session.commit()
+
+        response = AppResponse()
+        return response
+
+    def updateDocument(self,command):
+        timeStamp = int(time.time()) 
+        command.data['updatedAt'] = timeStamp
+
+        strData = json.dumps(command.data)
+
+        with Session(self.engine) as session:
+            record = session.get(Doc, command.id)
+            record.content = strData
+            record.name = command.name
+            record.tags = command.tags
+            record.updated_at = timeStamp
             session.commit()
 
         response = AppResponse()
@@ -93,6 +126,9 @@ class DocSqlLiteRepository():
                 return AppResponse(status=404, message="Record not found")
             
             dictionary = json.loads(record.content)
+            dictionary['createdAt'] = record.created_at
+            dictionary['updatedAt'] = record.updated_at
+
             response = GetRecordResponse(record=dictionary, userId="system")
         return response
 

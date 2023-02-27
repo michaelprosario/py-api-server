@@ -10,6 +10,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
 from typing import List
 from typing import Optional
+import time
 import json
 import sys
 import os
@@ -45,6 +46,10 @@ class DocSqlLiteRepository():
         Base.metadata.create_all(self.engine)        
     
     def addDocument(self,command):
+
+        timeStamp = int(time.time()) 
+        command.data['createdAt'] = timeStamp
+
         strData = json.dumps(command.data)
 
         with Session(self.engine) as session:
@@ -56,7 +61,7 @@ class DocSqlLiteRepository():
                 tags = command.tags,
                 created_by='system',
                 updated_by='system', 
-                created_at=0, 
+                created_at=timeStamp, 
                 updated_at=0
                 )
             session.add_all([record])
@@ -66,6 +71,9 @@ class DocSqlLiteRepository():
         return response
 
     def updateDocument(self,command):
+        timeStamp = int(time.time()) 
+        command.data['updatedAt'] = timeStamp
+
         strData = json.dumps(command.data)
 
         with Session(self.engine) as session:
@@ -73,6 +81,7 @@ class DocSqlLiteRepository():
             record.content = strData
             record.name = command.name
             record.tags = command.tags
+            record.updated_at = timeStamp
             session.commit()
 
         response = AppResponse()

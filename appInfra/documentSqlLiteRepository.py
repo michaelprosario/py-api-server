@@ -126,6 +126,9 @@ class DocSqlLiteRepository():
                 return AppResponse(status=404, message="Record not found")
             
             dictionary = json.loads(record.content)
+            dictionary['createdAt'] = record.created_at
+            dictionary['updatedAt'] = record.updated_at
+
             response = GetRecordResponse(record=dictionary, userId="system")
         return response
 

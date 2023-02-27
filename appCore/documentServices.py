@@ -21,8 +21,7 @@ class GetRecordsResponse(BaseModel):
 
 class AddDocumentCommand(BaseModel):
   collection: str = ''
-  createdAt: float = 0
-  createdBy: str 
+  userId: str 
   data: dict
   id:str
 

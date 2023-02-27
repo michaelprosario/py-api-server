@@ -21,7 +21,7 @@ class DocumentServicesTests(unittest.TestCase):
         }
         createdBy = 'test'
         id = str(uuid.uuid4())
-        command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)  
+        command = AddDocumentCommand(data=data, userId=createdBy, id=id)  
         command.collection = 'test'
         command.id = id
         return command

@@ -23,10 +23,6 @@ app = FastAPI()
 async def root():
     return {"message": "Server ok"}
 
-@app.post("/add-document")
-async def addDocument(command: AddDocumentCommand):      
-    return service.addDocument(command)
-
 @app.post("/store-document")
 async def storeDocument(command: StoreDocumentCommand):      
     return service.storeDocument(command)

@@ -17,7 +17,7 @@ class DocumentServicesTests(unittest.TestCase):
             'content': "content"
         }
         createdBy = 'test'
-        command = AddDocumentCommand(data=data, createdBy=createdBy, id=id)  
+        command = AddDocumentCommand(data=data, userId=createdBy, id=id, collection="c1", name="name1")  
 
         repo = DocumentRepository()      
         service = DocumentServices(repo)
@@ -35,7 +35,7 @@ class DocumentServicesTests(unittest.TestCase):
             'content': "content"
         }
         createdBy = 'test'
-        command = AddDocumentCommand(data=data, createdBy=createdBy, id="foo")  
+        command = AddDocumentCommand(data=data, userId=createdBy, id="foo", collection="c1", name="name1")  
 
         repo = DocumentRepository()      
         service = DocumentServices(repo)

@@ -20,9 +20,9 @@ class GetRecordsResponse(BaseModel):
   data: List[dict]
 
 class AddDocumentCommand(BaseModel):
-  collection: str = ''
-  userId: str = ''
-  name: str = ''
+  collection: str
+  userId: str
+  name: str
   tags: str = ''
   data: dict
   id:str = ''

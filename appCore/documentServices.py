@@ -1,23 +1,12 @@
 from typing import Optional, List
 import time
 import datetime
+from appCore.storeDocumentCommandValidator import StoreDocumentCommandValidator
 from pydantic import BaseModel,ValidationError
+from appCore.responses import AppResponse
 import re
 
-class AppResponse(BaseModel):
-  message: str = 'ok'
-  status: int = 200
-  errors: dict = {}
 
-class GetRecordResponse(BaseModel):
-  message: str = 'ok'
-  status: int = 200
-  record: dict 
-
-class GetRecordsResponse(BaseModel):
-  message: str = 'ok'
-  status: int = 200
-  data: List[dict]
 
 class AddDocumentCommand(BaseModel):
   collection: str
@@ -75,9 +64,12 @@ class DocumentServices:
     guid_pattern = "^(?:\\{{0,1}(?:[0-9a-fA-F]){8}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){12}\\}{0,1})$"
     return re.match(guid_pattern, input) != None
 
-  def makeAppResponse(self,message,statusCode, error):
-      appResponse = AppResponse(message=message, statusCode=statusCode, error=error)
+  def makeAppResponse(self,message,statusCode, errors):
+      appResponse = AppResponse()
+      appResponse.message = message
       appResponse.status = statusCode
+      appResponse.errors = errors
+
       return appResponse
 
   def addDocument(self,command):
@@ -100,6 +92,10 @@ class DocumentServices:
   def storeDocument(self,command):
     if command == None:
       return self.makeAppResponse('command is none', 400, None)
+
+    errors = StoreDocumentCommandValidator().validate(command)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
 
     try:
       if not self.isUUID(command.id):

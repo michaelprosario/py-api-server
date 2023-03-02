@@ -3,9 +3,9 @@ import os
 sys.path.append('../appCore')
 
 import json
-from appCore.documentServices import AppResponse
-from appCore.documentServices import GetRecordResponse
-from appCore.documentServices import GetRecordsResponse
+from appCore.responses import AppResponse
+from appCore.responses import GetRecordResponse
+from appCore.responses import GetRecordsResponse
 from appCore.documentServices import GetDocumentQuery
 from os.path import exists
 

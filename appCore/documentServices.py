@@ -3,6 +3,10 @@ from appCore.commands import GetDocumentQuery
 from appCore.commands import GetDocumentsQuery
 from appCore.commands import StoreDocumentCommand
 from appCore.responses import AppResponse
+from appCore.responses import GetRecordResponse
+from appCore.responses import GetRecordsResponse
+
+
 from appCore.validators import StoreDocumentCommandValidator
 from pydantic import BaseModel,ValidationError
 from typing import Optional, List
@@ -112,7 +116,7 @@ class DocumentServices:
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 
-    if(query.id == ''):
+    if(query.id== ''):
       return self.makeAppResponse('validation error: id required', 400, None)
 
     try:

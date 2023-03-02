@@ -1,9 +1,20 @@
 import typing
 import unittest
-from appCore.documentServices import AddDocumentCommand
+import os
+import sys
+
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+from appCore.commands import AddDocumentCommand
+from appCore.commands import AddDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.documentServices import DocumentRepository
-from appCore.documentServices import GetDocumentsQuery
+from appCore.commands import GetDocumentsQuery
+from appCore.commands import GetDocumentQuery
+from appCore.responses import GetRecordsResponse
+
 import uuid
 
 class DocumentServicesTests(unittest.TestCase):
@@ -54,7 +65,7 @@ class DocumentServicesTests(unittest.TestCase):
         service = DocumentServices(repo)
         
         # act
-        response = service.deleteDocument(id)
+        response = service.deleteDocument(GetDocumentQuery(id=id, userId='me'))
 
         # assert
         self.assertTrue(response.status == 200)

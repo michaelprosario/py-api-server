@@ -1,8 +1,8 @@
-from appCore.documentServices import AddDocumentCommand
-from appCore.documentServices import StoreDocumentCommand
+
+from appCore.commands import StoreDocumentCommand
 from appCore.documentServices import DocumentServices
-from appCore.documentServices import GetDocumentQuery
-from appCore.documentServices import GetDocumentsQuery
+from appCore.commands import GetDocumentQuery
+from appCore.commands import GetDocumentsQuery
 from appInfra.documentFileRepository import DocumentFileRepository
 from appInfra.documentSqlLiteRepository import DocSqlLiteRepository
 import uuid

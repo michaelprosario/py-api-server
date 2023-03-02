@@ -56,6 +56,10 @@ class DocumentServices:
       return appResponse
 
   def addDocument(self,command):
+    errors = StoreDocumentCommandValidator().validate(command)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
+
     if command == None:
       return self.makeAppResponse('command is none', 400, None)
 
@@ -108,6 +112,9 @@ class DocumentServices:
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 
+    if(query.id == ''):
+      return self.makeAppResponse('validation error: id required', 400, None)
+
     try:
       response = self.documentRepository.deleteDocument(query)
       return response
@@ -128,6 +135,9 @@ class DocumentServices:
   def getDocument(self,query):
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
+
+    if(query.id == ''):
+      return self.makeAppResponse('validation error: id required', 400, None)
 
     try:
       response = self.documentRepository.getDocument(query)

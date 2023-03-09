@@ -10,12 +10,26 @@ Provides a small document management store in Python
 
 ```
 pip install -r requirements.txt
+cd app
 sh start.sh
 ```
 ## What does the API look like for managing data?
 - The project provides API's for adding, storing, deleting, and searching data
 - JSON documents are added to collections
 - Visit localhost:8000/docs to view API docs using OpenApi
+
+## Docker build
+
+```
+docker build -t pyapiserver .
+```
+
+## Test container local
+
+```
+docker run -d --name pyapiserver -p 80:80 pyapiserver
+```
+
 
 ## Todo
 - on add - set createBy

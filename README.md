@@ -27,9 +27,8 @@ docker build -t pyapiserver .
 ## Test container local
 
 ```
-docker run -d --name pyapiserver -p 80:80 pyapiserver
+docker run -d -p 80:80 pyapiserver
 ```
-
 
 ## Todo
 - on add - set createBy

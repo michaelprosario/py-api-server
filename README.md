@@ -10,6 +10,7 @@ Provides a small document management store in Python
 
 ```
 pip install -r requirements.txt
+cd app
 sh start.sh
 ```
 ## What does the API look like for managing data?

@@ -18,6 +18,19 @@ sh start.sh
 - JSON documents are added to collections
 - Visit localhost:8000/docs to view API docs using OpenApi
 
+## Docker build
+
+```
+docker build -t pyapiserver .
+```
+
+## Test container local
+
+```
+docker run -d --name pyapiserver -p 80:80 pyapiserver
+```
+
+
 ## Todo
 - on add - set createBy
 - on update - set updatedBy 

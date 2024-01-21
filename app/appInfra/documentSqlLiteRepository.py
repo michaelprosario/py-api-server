@@ -14,27 +14,15 @@ import time
 import json
 import sys
 import os
+
 sys.path.append('../appCore')
 from appCore.responses import AppResponse
 from appCore.responses import GetRecordResponse
 from appCore.responses import GetRecordsResponse
 from appCore.documentServices import GetDocumentQuery
-
-class Base(DeclarativeBase):
-    pass
-
-class Doc(Base):
-    __tablename__ = "doc"
-
-    id: Mapped[str] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(1024))
-    collection: Mapped[str] = mapped_column(String(1024))
-    content: Mapped[str] = mapped_column(String(1024))
-    tags: Mapped[str] = mapped_column(String(1024))
-    created_by: Mapped[str] = mapped_column(String(1024))
-    updated_by: Mapped[str] = mapped_column(String(1024))
-    created_at: Mapped[int] = mapped_column(Integer)
-    updated_at: Mapped[int] = mapped_column(Integer)
+sys.path.append('../appInfra')
+from appInfra.doc import Doc
+from appInfra.doc import Base
 
 class DocSqlLiteRepository():
     def setupMemoryDatabase(self):

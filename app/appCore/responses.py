@@ -4,7 +4,7 @@ from typing import Optional, List
 class AppResponse(BaseModel):
   message: str = 'ok'
   status: int = 200
-  errors = []
+  errors: List[str] = []
 
 class GetRecordResponse(BaseModel):
   message: str = 'ok'

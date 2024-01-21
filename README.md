@@ -3,7 +3,7 @@
 Provides a small document management store in Python
 
 ## Purpose of project
-- Project to explore making small data systems with FastApi and SqlLite
+- Project to explore making small data systems with FastApi and SqlLite or Postgres
 - You can use this project for small hackathon or prototype projects
 
 ## How to start server
@@ -31,13 +31,15 @@ docker run -d -p 80:80 pyapiserver
 ```
 
 ## Todo
-- on add - set createBy
-- on update - set updatedBy 
-- store
-    - make sure following are required
-        - name
-        - collection
-        - userId
+- Write docs
+- Write validators for other requests
+    - get docs
+    - get doc
+    - delete
+- Find docker container with pgvector installed
+- Create table to store vector for doc
 
-
+# References
+- https://bugbytes.io/posts/vector-databases-pgvector-and-langchain/
+- langchain, pgvector - https://www.youtube.com/watch?v=FDBnyJu_Ndg
 

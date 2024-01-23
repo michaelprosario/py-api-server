@@ -7,7 +7,7 @@ from appCore.responses import GetRecordResponse
 from appCore.responses import GetRecordsResponse
 
 
-from appCore.validators import StoreDocumentCommandValidator
+from appCore.validators import StoreDocumentCommandValidator, GetDocumentQueryValidator, GetDocumentsQueryValidator
 from pydantic import BaseModel,ValidationError
 from typing import Optional, List
 import datetime
@@ -127,6 +127,11 @@ class DocumentServices:
       return errorResponse
 
   def getDocuments(self,query):
+    errors = GetDocumentsQueryValidator().validate(query)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
+
+
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 
@@ -137,6 +142,11 @@ class DocumentServices:
     return response
 
   def getDocument(self,query):
+    errors = GetDocumentQueryValidator().validate(query)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
+
+
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 

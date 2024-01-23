@@ -28,6 +28,7 @@ from appCore.responses import AppResponse
 from appCore.responses import GetRecordResponse
 from appCore.responses import GetRecordsResponse
 from appCore.documentServices import GetDocumentQuery
+from appCore.environmentHelper import getPgConnectionString
 sys.path.append('../appInfra')
 
 PgBase = declarative_base()
@@ -46,7 +47,8 @@ class PgDoc(PgBase):
     created_at = Column(TIMESTAMP)
     updated_at = Column(TIMESTAMP)
 
-connectionString = "postgresql://docs:docs@localhost/docs"
+connectionString = getPgConnectionString()
+
 class DocPgRepository():
     def setupMemoryDatabase(self):
         self.engine = create_engine(connectionString, echo=True)
@@ -59,8 +61,6 @@ class DocPgRepository():
     
     def addDocument(self,command):
         timeStamp = func.now()
-
-        #command.data['createdAt'] = timeStamp
 
         strData = json.dumps(command.data)
 
@@ -84,7 +84,6 @@ class DocPgRepository():
 
     def updateDocument(self,command):
         timeStamp = func.now()
-        #command.data['updatedAt'] = timeStamp
 
         strData = json.dumps(command.data)
 

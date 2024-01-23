@@ -36,7 +36,6 @@ docker run -d -p 80:80 pyapiserver
     - get docs
     - get doc
     - delete
-- Find docker container with pgvector installed
 - Create table to store vector for doc
 
 # References

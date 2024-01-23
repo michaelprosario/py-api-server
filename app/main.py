@@ -3,6 +3,7 @@ from appCore.commands import StoreDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.commands import GetDocumentQuery
 from appCore.commands import GetDocumentsQuery
+from appCore.environmentHelper import checkForRequiredEnvironmentVariables
 from appInfra.documentPgRepository import DocPgRepository
 import uuid
 
@@ -14,6 +15,7 @@ def getService():
     service = DocumentServices(repo)
     return service
 
+checkForRequiredEnvironmentVariables()
 service = getService()
 
 app = FastAPI()

@@ -116,8 +116,9 @@ class DocumentServices:
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 
-    if(query.id== ''):
-      return self.makeAppResponse('validation error: id required', 400, None)
+    errors = GetDocumentQueryValidator().validate(query)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
 
     try:
       response = self.documentRepository.deleteDocument(query)
@@ -145,7 +146,6 @@ class DocumentServices:
     errors = GetDocumentQueryValidator().validate(query)
     if(len(errors) > 0):
       return self.makeAppResponse('validation errors', 400, errors)
-
 
     if query == None:
       return self.makeAppResponse('query is none', 400, None)

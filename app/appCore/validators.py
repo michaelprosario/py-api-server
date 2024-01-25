@@ -35,4 +35,8 @@ class GetDocumentQueryValidator:
         if(command.userId == ''):
             results.append("userId should not be empty")
 
+        if(command.id == ''):
+            results.append("id should not be empty")
+
+
         return results

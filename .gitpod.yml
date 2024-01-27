@@ -1,1 +1,1 @@
-image: condaforge/mambaforge:22.9.0-1
+image: bitnami/pytorch

@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 
-sentences = ['That is a happy person', 'That is a very happy person']
+sentences = ['Lets have a drink', 'Do you want to go for a drink?']
 
 model = SentenceTransformer('thenlper/gte-small')
 embeddings = model.encode(sentences)

@@ -1,1 +1,1 @@
-image: bitnami/pytorch
+image: gitpod/workspace-python

@@ -6,42 +6,18 @@ from appCore.responses import AppResponse
 from appCore.responses import GetRecordResponse
 from appCore.responses import GetRecordsResponse
 
-
-from appCore.validators import StoreDocumentCommandValidator
+from appCore.validators import StoreDocumentCommandValidator, GetDocumentQueryValidator, GetDocumentsQueryValidator
 from pydantic import BaseModel,ValidationError
 from typing import Optional, List
+from appCore.documentRepository import DocumentRepository 
+
 import datetime
 import time
-
 import re
 
-class DocumentRepository:
-  def addDocument(self,command):
-    response = AppResponse()
-    return response
-
-  def updateDocument(self,command):
-    response = AppResponse()
-    return response
-
-  def deleteDocument(self,command):
-    response = AppResponse()
-    return response
-
-  def getDocuments(self,query):
-    response = GetRecordsResponse(data=[])
-    response.status = 200
-    return response
-
-  def getDocument(self,query):
-    response = AppResponse()
-    return response
-
-  def recordExists(self,query):
-    return false
 
 class DocumentServices:
-  def __init__(self, documentRepository ):
+  def __init__(self, documentRepository : DocumentRepository ):
     self.documentRepository = documentRepository
 
   def isUUID(self,input):
@@ -116,8 +92,9 @@ class DocumentServices:
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 
-    if(query.id== ''):
-      return self.makeAppResponse('validation error: id required', 400, None)
+    errors = GetDocumentQueryValidator().validate(query)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
 
     try:
       response = self.documentRepository.deleteDocument(query)
@@ -127,6 +104,11 @@ class DocumentServices:
       return errorResponse
 
   def getDocuments(self,query):
+    errors = GetDocumentsQueryValidator().validate(query)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
+
+
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 
@@ -137,6 +119,10 @@ class DocumentServices:
     return response
 
   def getDocument(self,query):
+    errors = GetDocumentQueryValidator().validate(query)
+    if(len(errors) > 0):
+      return self.makeAppResponse('validation errors', 400, errors)
+
     if query == None:
       return self.makeAppResponse('query is none', 400, None)
 

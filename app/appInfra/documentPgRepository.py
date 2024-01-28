@@ -1,13 +1,21 @@
+from sqlalchemy import Column
 from sqlalchemy import create_engine
 from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
 from sqlalchemy import select
 from sqlalchemy import String
-from sqlalchemy import Integer
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import JSON
+from sqlalchemy import Text
+from sqlalchemy import TIMESTAMP
+from sqlalchemy import func
+
+
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
+
 from typing import List
 from typing import Optional
 import time
@@ -16,41 +24,58 @@ import sys
 import os
 
 sys.path.append('../appCore')
-from appCore.responses import AppResponse
-from appCore.responses import GetRecordResponse
-from appCore.responses import GetRecordsResponse
+from appCore.documentRepository import DocumentRepository
 from appCore.documentServices import GetDocumentQuery
-sys.path.append('../appInfra')
-from appInfra.doc import Doc
-from appInfra.doc import Base
+from appCore.environmentHelper import getPgConnectionString
+from appCore.responses import AppResponse, GetRecordResponse, GetRecordsResponse
+from appCore.commands import AddDocumentCommand
 
-class DocSqlLiteRepository():
+sys.path.append('../appInfra')
+
+PgBase = declarative_base()
+Session = sessionmaker()
+
+class PgDoc(PgBase):
+    __tablename__ = 'docs'
+
+    id = Column(String, primary_key=True)
+    name = Column(String)
+    collection = Column(String)
+    content = Column(Text)
+    tags = Column(JSON)
+    created_by = Column(String)
+    updated_by = Column(String)
+    created_at = Column(TIMESTAMP)
+    updated_at = Column(TIMESTAMP)
+
+connectionString = getPgConnectionString()
+
+class DocPgRepository(DocumentRepository):
     def setupMemoryDatabase(self):
-        self.engine = create_engine("sqlite://", echo=True)
-        Base.metadata.create_all(self.engine)
+        self.engine = create_engine(connectionString, echo=True)
+        PgBase.metadata.create_all(self.engine)
 
     def setupAppDatabase(self):
-        self.engine = create_engine("sqlite:///app.db", echo=True)
-        Base.metadata.create_all(self.engine)        
+        self.engine = create_engine(connectionString, echo=True)
+        PgBase.metadata.create_all(self.engine)
+        Session.configure(bind=self.engine)
     
-    def addDocument(self,command):
-
-        timeStamp = int(time.time()) 
-        command.data['createdAt'] = timeStamp
+    def addDocument(self,command: AddDocumentCommand):
+        timeStamp = func.now()
 
         strData = json.dumps(command.data)
 
-        with Session(self.engine) as session:
-            record = Doc(
+        with Session() as session:
+            record = PgDoc(
                 id=command.id, 
                 name=command.name, 
                 collection=command.collection,
                 content=strData,
                 tags = command.tags,
-                created_by='system',
-                updated_by='system', 
+                created_by=command.userId,
+                updated_by=command.userId, 
                 created_at=timeStamp, 
-                updated_at=0
+                updated_at=timeStamp
                 )
             session.add_all([record])
             session.commit()
@@ -58,18 +83,18 @@ class DocSqlLiteRepository():
         response = AppResponse()
         return response
 
-    def updateDocument(self,command):
-        timeStamp = int(time.time()) 
-        command.data['updatedAt'] = timeStamp
+    def updateDocument(self,command: AddDocumentCommand):
+        timeStamp = func.now()
 
         strData = json.dumps(command.data)
 
-        with Session(self.engine) as session:
-            record = session.get(Doc, command.id)
+        with Session() as session:
+            record = session.get(PgDoc, command.id)
             record.content = strData
             record.name = command.name
             record.tags = command.tags
             record.updated_at = timeStamp
+            record.updated_by = command.userId
             session.commit()
 
         response = AppResponse()
@@ -77,8 +102,8 @@ class DocSqlLiteRepository():
 
     def deleteDocument(self,query):
         if self.recordExists(query):
-            with Session(self.engine) as session:
-                record = session.get(Doc, query.id)
+            with Session() as session:
+                record = session.get(PgDoc, query.id)
                 session.delete(record)
                 session.commit()
         
@@ -89,14 +114,14 @@ class DocSqlLiteRepository():
         records = []
         print(query)
 
-        with Session(self.engine) as session:
+        with Session() as session:
             if len(query.keyword) > 0:
                 search = "%{}%".format(query.keyword)
-                recordSet = session.query(Doc).filter(Doc.content.like(search))            
+                recordSet = session.query(PgDoc).filter(PgDoc.content.like(search))            
             elif len(query.collection) > 0:
-                recordSet = session.query(Doc).filter(Doc.collection == query.collection)            
+                recordSet = session.query(PgDoc).filter(PgDoc.collection == query.collection)            
             else:
-                recordSet = session.query(Doc).all()
+                recordSet = session.query(PgDoc).all()
 
             for record in recordSet:
                 query = GetDocumentQuery(userId="system", id=record.id)
@@ -108,14 +133,17 @@ class DocSqlLiteRepository():
         return response
 
     def getDocument(self,query):
-        with Session(self.engine) as session:
-            record = session.get(Doc, query.id)
+        with Session() as session:
+            record = session.get(PgDoc, query.id)
             if( record == None):
                 return AppResponse(status=404, message="Record not found")
             
             dictionary = json.loads(record.content)
             dictionary['createdAt'] = record.created_at
             dictionary['updatedAt'] = record.updated_at
+            dictionary['createdBy'] = record.created_by
+            dictionary['updatedBy'] = record.updated_by
+
 
             response = GetRecordResponse(record=dictionary, userId="system")
         return response
@@ -124,8 +152,8 @@ class DocSqlLiteRepository():
         if query == None:
             raise Exception("Query is not defined")
 
-        with Session(self.engine) as session:
-            record = session.get(Doc, query.id)
+        with Session() as session:
+            record = session.get(PgDoc, query.id)
 
         return record != None
 

@@ -3,18 +3,19 @@ from appCore.commands import StoreDocumentCommand
 from appCore.documentServices import DocumentServices
 from appCore.commands import GetDocumentQuery
 from appCore.commands import GetDocumentsQuery
-from appInfra.documentFileRepository import DocumentFileRepository
-from appInfra.documentSqlLiteRepository import DocSqlLiteRepository
+from appCore.environmentHelper import checkForRequiredEnvironmentVariables
+from appInfra.documentPgRepository import DocPgRepository
 import uuid
 
 from fastapi import FastAPI
 
 def getService():
-    repo = DocSqlLiteRepository()
+    repo = DocPgRepository()
     repo.setupAppDatabase()
     service = DocumentServices(repo)
     return service
 
+checkForRequiredEnvironmentVariables()
 service = getService()
 
 app = FastAPI()

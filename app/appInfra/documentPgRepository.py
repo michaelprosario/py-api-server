@@ -24,11 +24,12 @@ import sys
 import os
 
 sys.path.append('../appCore')
-from appCore.responses import AppResponse
-from appCore.responses import GetRecordResponse
-from appCore.responses import GetRecordsResponse
+from appCore.documentRepository import DocumentRepository
 from appCore.documentServices import GetDocumentQuery
 from appCore.environmentHelper import getPgConnectionString
+from appCore.responses import AppResponse, GetRecordResponse, GetRecordsResponse
+from appCore.commands import AddDocumentCommand
+
 sys.path.append('../appInfra')
 
 PgBase = declarative_base()
@@ -49,7 +50,7 @@ class PgDoc(PgBase):
 
 connectionString = getPgConnectionString()
 
-class DocPgRepository():
+class DocPgRepository(DocumentRepository):
     def setupMemoryDatabase(self):
         self.engine = create_engine(connectionString, echo=True)
         PgBase.metadata.create_all(self.engine)
@@ -59,7 +60,7 @@ class DocPgRepository():
         PgBase.metadata.create_all(self.engine)
         Session.configure(bind=self.engine)
     
-    def addDocument(self,command):
+    def addDocument(self,command: AddDocumentCommand):
         timeStamp = func.now()
 
         strData = json.dumps(command.data)
@@ -71,8 +72,8 @@ class DocPgRepository():
                 collection=command.collection,
                 content=strData,
                 tags = command.tags,
-                created_by='system',
-                updated_by='system', 
+                created_by=command.userId,
+                updated_by=command.userId, 
                 created_at=timeStamp, 
                 updated_at=timeStamp
                 )
@@ -82,7 +83,7 @@ class DocPgRepository():
         response = AppResponse()
         return response
 
-    def updateDocument(self,command):
+    def updateDocument(self,command: AddDocumentCommand):
         timeStamp = func.now()
 
         strData = json.dumps(command.data)
@@ -93,6 +94,7 @@ class DocPgRepository():
             record.name = command.name
             record.tags = command.tags
             record.updated_at = timeStamp
+            record.updated_by = command.userId
             session.commit()
 
         response = AppResponse()
@@ -139,6 +141,9 @@ class DocPgRepository():
             dictionary = json.loads(record.content)
             dictionary['createdAt'] = record.created_at
             dictionary['updatedAt'] = record.updated_at
+            dictionary['createdBy'] = record.created_by
+            dictionary['updatedBy'] = record.updated_by
+
 
             response = GetRecordResponse(record=dictionary, userId="system")
         return response
